@@ -4,10 +4,10 @@ import torch.nn.functional as F
 
 import torch_geometric.nn as pyg_nn
 
-import torch
 
 
 class GNNStack(nn.Module):
+    ''' The GNN Model '''
     def __init__(self, input_dim, hidden_dim, output_dim, task='node'):
         super(GNNStack, self).__init__()
         self.task = task
