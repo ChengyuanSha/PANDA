@@ -93,6 +93,10 @@ def get_edge_index(G):
 
 def get_train_test_mask2(autism_df):
     ''' Get the training and testing mask '''
+    # divide into more classes according to the confidence score
+    autism_df['label'][autism_df['confidence']==0.75] = 2
+    autism_df['label'][autism_df['confidence'] == 0.5] = 3
+    # y label
     y = torch.tensor(autism_df['label'].to_list())
 
     train_mask = torch.zeros(y.shape[0], dtype=torch.bool)
