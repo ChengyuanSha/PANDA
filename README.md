@@ -1,6 +1,4 @@
->📋  A template README.md for code accompanying a Machine Learning paper
-
-# My Paper Title
+# PANDA: Prioritization ofautism‐genes using network‐based deep‐learning approach
 
 This repository is the official implementation of [My Paper Title](https://arxiv.org/abs/2030.12345). 
 
@@ -11,7 +9,7 @@ This repository is the official implementation of [My Paper Title](https://arxiv
 To install requirements:
 
 ```setup
-pip install -r requirements.txt
+conda env create -f environment.yml
 ```
 
 >📋  Describe how to set up the environment, e.g. pip/conda/docker commands, download datasets, etc...
