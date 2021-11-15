@@ -1,4 +1,4 @@
-# PANDA: Prioritization ofautism‐genes using network‐based deep‐learning approach
+# PANDA: Prioritization of autism‐genes using network‐based deep‐learning approach
 
 This repository is the official implementation of [My Paper Title](https://arxiv.org/abs/2030.12345). 
 
