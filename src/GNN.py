@@ -21,7 +21,7 @@ class GNNStack(nn.Module):
         self.lns.append(nn.LayerNorm(hidden_dim2))
         # post-message-passing
         self.post_mp = nn.Sequential(
-            nn.Linear(hidden_dim2, hidden_dim2), nn.Dropout(0.25),
+            nn.Linear(hidden_dim2, hidden_dim2),
             nn.Linear(hidden_dim2, output_dim))
 
         self.dropout = 0.25
@@ -32,7 +32,7 @@ class GNNStack(nn.Module):
             x = self.convs[i](x, edge_index)
             emb = x
             x = F.relu(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
+            # x = F.dropout(x, p=self.dropout, training=self.training)
             if not i == self.num_layers - 1:  # except last layer
                 x = self.lns[i](x)
 
