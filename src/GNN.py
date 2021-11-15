@@ -41,4 +41,6 @@ class GNNStack(nn.Module):
         return emb, F.log_softmax(x, dim=1)
 
     def loss(self, pred, label):
-        return F.nll_loss(pred, label)
+        ''' Define loss functions in NN, L2 norm regularization is implemented in the SGD optimizer weight decay  '''
+        return nn.CrossEntropyLoss()(pred, label)
+        # return  F.nll_loss(pred, label) # nn.CrossEntropyLoss()(pred, label)
