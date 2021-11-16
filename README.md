@@ -23,6 +23,13 @@ The dataset is located in data folder (two .csv files).
 
 To train and evaluate my model, run ```Main.ipynb``` in ```src```.
 
+## Reference 
+
+Zhang, Y., Chen, Y., & Hu, T. (2020). 
+[PANDA: Prioritization of autism‐genes using network‐based deep‐learning approach](https://onlinelibrary.wiley.com/doi/full/10.1002/gepi.22282). 
+Genetic epidemiology, 44(4), 382-394.
+
+
 [comment]: <> (To train the model&#40;s&#41; in the paper, run this command:)
 
 [comment]: <> (```train)
