@@ -27,30 +27,6 @@ def read():
 
     num_classes = len(np.unique(y))
 
-    # train_mask, test_mask, num_classes, y = get_train_test_mask(G)
-
-    # make masks
-    # disease_mask = list(zip(disease_position, [1 for _ in disease_position]))
-    # healthy_mask = list(zip(disease_position, [0 for _ in disease_position]))
-    # total_mask = disease_mask + healthy_mask
-    # random.shuffle(total_mask)
-
-    # n = x.shape[0]
-    # randomassort = list(range(n))
-    # random.shuffle(randomassort)
-    # max_train = math.floor(len(randomassort) * .1)
-    # train_mask_idx = torch.tensor(randomassort[:max_train])
-    # test_mask_idx = torch.tensor(randomassort[max_train:])
-    # train_mask = torch.zeros(n);
-    # test_mask = torch.zeros(n)
-    # train_mask.scatter_(0, train_mask_idx, 1)
-    # test_mask.scatter_(0, test_mask_idx, 1)
-    # train_mask = train_mask.type(torch.bool)
-    # test_mask = test_mask.type(torch.bool)
-
-    # data.x = x
-    # data.y = y
-
     data = Data(edge_index=edge_index, x=x, y=y, train_mask=train_mask, test_mask=test_mask,
                 num_classes=num_classes)  # .t().contiguous()
 

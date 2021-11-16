@@ -32,6 +32,7 @@ class GNNStack(nn.Module):
             x = self.convs[i](x, edge_index)
             emb = x
             x = F.relu(x)
+            # add drop later
             # x = F.dropout(x, p=self.dropout, training=self.training)
             if not i == self.num_layers - 1:  # except last layer
                 x = self.lns[i](x)
