@@ -5,11 +5,11 @@ import torch.nn.functional as F
 import torch_geometric.nn as pyg_nn
 
 
-class GNNStack(nn.Module):
-    ''' The GNN Model '''
+class GCNStack(nn.Module):
+    ''' The GCN Model '''
 
     def __init__(self, input_dim, hidden_dim1, hidden_dim2, output_dim):
-        super(GNNStack, self).__init__()
+        super(GCNStack, self).__init__()
         # graph convolution layers
         self.convs = nn.ModuleList()
         self.convs.append(pyg_nn.GCNConv(input_dim, hidden_dim1))
