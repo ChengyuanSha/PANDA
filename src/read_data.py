@@ -10,7 +10,7 @@ import numpy as np
 
 
 def read():
-    ''' read the input data into the pyG Data class format '''
+    """ read the input data into the pyG Data class format """
     with open("../data/HMIN_edgelist.csv", 'r') as data:
         G = nx.parse_edgelist(data, delimiter=',', create_using=nx.Graph(), nodetype=int)
     # read autism df
@@ -34,7 +34,7 @@ def read():
 
 
 def get_node_features(G):
-    ''' use hand designed node features or not'''
+    """ use hand designed node features or not """
     x = torch.eye(G.number_of_nodes(), dtype=torch.float)
     # # feature: node degree
     # degrees = torch.tensor([val for (node, val) in G.degree()], dtype=torch.float)
@@ -52,7 +52,7 @@ def get_node_features(G):
 
 
 def get_edge_index(G):
-    ''' Get Coordinate of the edge index '''
+    """ Get Coordinate of the edge index """
     adj = nx.to_scipy_sparse_matrix(G).tocoo()
     row = torch.from_numpy(adj.row.astype(np.int64)).to(torch.long)
     col = torch.from_numpy(adj.col.astype(np.int64)).to(torch.long)
@@ -61,10 +61,11 @@ def get_edge_index(G):
 
 
 def get_train_test_label(G, autism_df):
-    ''' Get the training and testing mask '''
+    """ Get the training and testing mask """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
     nodes = np.array(G.nodes())
+    # Boolean array. True nodes are labeled, only used labeled nodes for training and testing
     labeled_index = np.in1d(nodes, autism_nodes)
     y = torch.tensor(autism_df['label'].to_list())
 
