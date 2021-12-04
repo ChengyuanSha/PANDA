@@ -64,20 +64,21 @@ def get_train_test_label(G, autism_df):
     """ Get the training and testing mask """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
-    nodes = np.array(G.nodes())
-    # Boolean array. True nodes are labeled, only used labeled nodes for training and testing
-    labeled_index = np.in1d(nodes, autism_nodes)
+    all_nodes = np.array(G.nodes())
+    # Find the labeled index in all_nodes
+    labeled_index = [np.where(all_nodes == i)[0][0] for i in autism_nodes]
+
     y = torch.tensor(autism_df['label'].to_list())
 
     # divide into more classes according to the confidence score
     autism_df['label'][autism_df['confidence'] == 0.75] = 2
     autism_df['label'][autism_df['confidence'] == 0.5] = 3
 
-    # initialize
-    y_label = np.zeros(nodes.shape[0], dtype=np.compat.long)
-    train_mask = np.zeros(nodes.shape[0], dtype=bool)
-    test_mask = np.zeros(nodes.shape[0], dtype=bool)
+    # initialize y_label, train_mask, test_mask to whole graph size
+    y_label = np.zeros(all_nodes.shape[0], dtype=np.compat.long)
     y_label[:] = 4  # temporarily set class 4 to unlabeled data
+    train_mask = np.zeros(all_nodes.shape[0], dtype=bool)
+    test_mask = np.zeros(all_nodes.shape[0], dtype=bool)
 
     # y_label[labeled_index] = torch.tensor(autism_df['label'].to_list())
     temp_label = autism_df['label'].to_numpy()
