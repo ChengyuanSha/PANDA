@@ -60,15 +60,16 @@ def get_edge_index(G):
     return edge_index
 
 
-def get_train_test_label(G, autism_df):
-    """ Get the training and testing mask """
+def get_train_test_label(G, autism_df, sample_balanced_class=False):
+    """ Get the training, testing mask, and y labels """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
     all_nodes = np.array(G.nodes())
-    # Find the labeled index in all_nodes
-    labeled_index = [np.where(all_nodes == i)[0][0] for i in autism_nodes]
 
-    y = torch.tensor(autism_df['label'].to_list())
+    # Find the labeled index in all_nodes, all_nodes are unique
+    labeled_index = [np.where(all_nodes == i)[0][0] for i in autism_nodes]
+    label_mask = np.zeros(all_nodes.shape[0], dtype=bool)
+    label_mask[labeled_index] = True
 
     # divide into more classes according to the confidence score
     autism_df['label'][autism_df['confidence'] == 0.75] = 2
@@ -80,17 +81,30 @@ def get_train_test_label(G, autism_df):
     train_mask = np.zeros(all_nodes.shape[0], dtype=bool)
     test_mask = np.zeros(all_nodes.shape[0], dtype=bool)
 
-    # y_label[labeled_index] = torch.tensor(autism_df['label'].to_list())
-    temp_label = autism_df['label'].to_numpy()
+    # set labeled node in graph
+    y_label[labeled_index] = autism_df['label'].to_numpy()
 
-    y_label[labeled_index] = temp_label
+    # randomly assign train test masks
+    autism_df = autism_df.reset_index()
+    y_length = len(autism_df.index)
+    y_index = np.arange(y_length)
 
-    y_index = torch.randperm(y.shape[0])
-    max_train = int(len(y) * 0.8)
+    if sample_balanced_class:
+        # random sample 20 samples for each class
+        # 4 labeled classes
+        train_list = np.array([np.random.choice(autism_df.index[autism_df['label']==i].tolist(), 60, replace=False) for i in range(4)]).flatten()
+        test_list = np.array([i for i in y_index if i not in train_list])
+    else:
+        # 75% train, 25% test
+        max_train = int(y_length * 0.75)
+        permutated_list = np.random.permutation(y_index)
+        train_list = permutated_list[:max_train]
+        test_list = permutated_list[max_train:]
 
     # Using multiple levels of boolean index mask to assign train and test masks
-    train_mask.flat[np.flatnonzero(labeled_index)[y_index[:max_train]]] = True
-    test_mask.flat[np.flatnonzero(labeled_index)[y_index[max_train:]]] = True
+    # 1. index to labelled indexes 2. assign to train/test mask to True
+    train_mask.flat[np.flatnonzero(label_mask)[train_list]] = True
+    test_mask.flat[np.flatnonzero(label_mask)[test_list]] = True
 
     return torch.tensor(train_mask, dtype=torch.bool),  \
            torch.tensor(test_mask, dtype=torch.bool), torch.tensor(y_label, dtype=torch.long)
