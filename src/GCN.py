@@ -33,7 +33,7 @@ class GCNStack(nn.Module):
             emb = x
             x = F.relu(x)
             # add dropout layer
-            x = F.dropout(x, p=self.dropout, training=self.training)
+            # x = F.dropout(x, p=self.dropout, training=self.training)
             if not i == self.num_layers - 1:  # except last layer
                 x = self.lns[i](x)
 
