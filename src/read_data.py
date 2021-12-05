@@ -7,14 +7,19 @@ import math
 import pandas as pd
 from torch_geometric.utils import from_networkx
 import numpy as np
+import os
 
+script_dir = os.path.dirname(__file__)  # absolute dir the script is in
 
 def read():
     """ read the input data into the pyG Data class format """
-    with open("../data/HMIN_edgelist.csv", 'r') as data:
+    edge_list_path = os.path.join(script_dir, "../data/HMIN_edgelist.csv")
+    autism_df_path = os.path.join(script_dir, "../data/labeled_genes.csv")
+
+    with open(edge_list_path, 'r') as data:
         G = nx.parse_edgelist(data, delimiter=',', create_using=nx.Graph(), nodetype=int)
     # read autism df
-    autism_df = pd.read_csv('../data/labeled_genes.csv')
+    autism_df = pd.read_csv(autism_df_path)
     autism_df = autism_df.drop_duplicates(subset='entrez_id', keep="last")
 
     # get the node features
@@ -60,7 +65,7 @@ def get_edge_index(G):
     return edge_index
 
 
-def get_train_test_label(G, autism_df, sample_balanced_class=False):
+def get_train_test_label(G, autism_df, sample_balanced_class=True):
     """ Get the training, testing mask, and y labels """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()

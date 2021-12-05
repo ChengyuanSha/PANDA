@@ -16,16 +16,22 @@ class GAT(torch.nn.Module):
         self.conv2 = pyg_nn.GATConv(self.hid * self.in_head, dataset.num_classes, concat=False,
                              heads=self.out_head, dropout=0.6)
 
-    def forward(self, data):
-        x, edge_index = data.x, data.edge_index
+    def forward(self, x, edge_index):
 
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv1(x, edge_index)
+        emb = x
         x = F.elu(x)
         x = F.dropout(x, p=0.6, training=self.training)
         x = self.conv2(x, edge_index)
 
-        return F.log_softmax(x, dim=1)
+        return emb, F.log_softmax(x, dim=1)
+
+
+    def loss(self, pred, label):
+        ''' Define loss functions in NN, L2 norm regularization is implemented in the SGD optimizer weight decay  '''
+        # return  F.nll_loss(pred, label) # nn.CrossEntropyLoss()(pred, label)
+        return nn.CrossEntropyLoss()(pred, label)
 
 
 

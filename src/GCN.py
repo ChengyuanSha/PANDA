@@ -32,8 +32,8 @@ class GCNStack(nn.Module):
             x = self.convs[i](x, edge_index)
             emb = x
             x = F.relu(x)
-            # add drop later
-            # x = F.dropout(x, p=self.dropout, training=self.training)
+            # add dropout layer
+            x = F.dropout(x, p=self.dropout, training=self.training)
             if not i == self.num_layers - 1:  # except last layer
                 x = self.lns[i](x)
 
@@ -43,5 +43,6 @@ class GCNStack(nn.Module):
 
     def loss(self, pred, label):
         ''' Define loss functions in NN, L2 norm regularization is implemented in the SGD optimizer weight decay  '''
-        return nn.CrossEntropyLoss()(pred, label)
         # return  F.nll_loss(pred, label) # nn.CrossEntropyLoss()(pred, label)
+        return nn.CrossEntropyLoss()(pred, label)
+
