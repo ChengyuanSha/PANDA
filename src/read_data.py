@@ -18,9 +18,11 @@ def read():
 
     with open(edge_list_path, 'r') as data:
         G = nx.parse_edgelist(data, delimiter=',', create_using=nx.Graph(), nodetype=int)
+
     # read autism df
     autism_df = pd.read_csv(autism_df_path)
     autism_df = autism_df.drop_duplicates(subset='entrez_id', keep="last")
+    autism_df = autism_df.reset_index()
 
     # get the node features
     # G = G.subgraph(autism_nodes)
@@ -65,7 +67,7 @@ def get_edge_index(G):
     return edge_index
 
 
-def get_train_test_label(G, autism_df, sample_balanced_class=True):
+def get_train_test_label(G, autism_df, sample_balanced_class=False, assign_unlabeled_using_community=True):
     """ Get the training, testing mask, and y labels """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
@@ -89,8 +91,14 @@ def get_train_test_label(G, autism_df, sample_balanced_class=True):
     # set labeled node in graph
     y_label[labeled_index] = autism_df['label'].to_numpy()
 
+    # use communities info to assign a label to unlabelled data
+    if assign_unlabeled_using_community:
+        partion = community_louvain.best_partition(G)
+        for c, i in enumerate(all_nodes):
+            if c not in labeled_index:
+                y_label[c] = partion[i] + 4 # skip first 4 classes
+
     # randomly assign train test masks
-    autism_df = autism_df.reset_index()
     y_length = len(autism_df.index)
     y_index = np.arange(y_length)
 

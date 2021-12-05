@@ -24,7 +24,7 @@ class GCNStack(nn.Module):
             nn.Linear(hidden_dim2, hidden_dim2),
             nn.Linear(hidden_dim2, output_dim))
 
-        self.dropout = 0.25
+        self.dropout = 0.5
         self.num_layers = 3
 
     def forward(self, x, edge_index):
