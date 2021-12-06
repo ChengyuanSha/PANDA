@@ -30,12 +30,12 @@ def read():
 
     x = get_node_features(G)
 
-    train_mask, test_mask, y = get_train_test_label(G, autism_df)
+    train_mask, test_mask, val_mask, y = get_train_test_label(G, autism_df)
 
     num_classes = len(np.unique(y))
 
     data = Data(edge_index=edge_index, x=x, y=y, train_mask=train_mask, test_mask=test_mask,
-                num_classes=num_classes)  # .t().contiguous()
+                val_mask = val_mask, num_classes=num_classes)  # .t().contiguous()
 
     return data
 
@@ -87,6 +87,7 @@ def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabe
     y_label[:] = 4  # temporarily set class 4 to unlabeled data
     train_mask = np.zeros(all_nodes.shape[0], dtype=bool)
     test_mask = np.zeros(all_nodes.shape[0], dtype=bool)
+    val_mask = np.zeros(all_nodes.shape[0], dtype=bool)
 
     # set labeled node in graph
     y_label[labeled_index] = autism_df['label'].to_numpy()
@@ -105,22 +106,24 @@ def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabe
     if sample_balanced_class:
         # random sample 150 samples for each class
         train_index = np.array([np.random.choice(autism_df.index[autism_df['label']==i].tolist(), 150, replace=False) for i in range(2)]).flatten()
-        test_index = np.array([i for i in y_index if i not in train_index])
+        remaining_index = np.array([i for i in y_index if i not in train_index])
     else:
         # 75% train, 25% test
         max_train = int(y_length * 0.85)
         permutated_list = np.random.permutation(y_index)
         train_index = permutated_list[:max_train]
-        test_index = permutated_list[max_train:]
-        # train_index = np.append(train_index, test_index[:200])
+        remaining_index = permutated_list[max_train:]
+    validation_index = remaining_index[:800]
+    test_index = remaining_index[800:]
 
     # Using multiple levels of boolean index mask to assign train and test masks
     # 1. index to labelled indexes 2. assign to train/test mask to True
     train_mask.flat[np.flatnonzero(label_mask)[train_index]] = True
     test_mask.flat[np.flatnonzero(label_mask)[test_index]] = True
+    val_mask[np.flatnonzero(label_mask)[validation_index]] = True
 
-    return torch.tensor(train_mask, dtype=torch.bool),  \
-           torch.tensor(test_mask, dtype=torch.bool), torch.tensor(y_label, dtype=torch.long)
+    return torch.tensor(train_mask, dtype=torch.bool), torch.tensor(test_mask, dtype=torch.bool), \
+           torch.tensor(val_mask, dtype=torch.bool), torch.tensor(y_label, dtype=torch.long)
 
 
 if __name__ == '__main__':
