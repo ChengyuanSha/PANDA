@@ -8,23 +8,23 @@ import torch_geometric.nn as pyg_nn
 class GCNStack(nn.Module):
     ''' The GCN Model '''
 
-    def __init__(self, input_dim, hidden_dim1, hidden_dim2, output_dim):
+    def __init__(self, input_dim, hidden_dim1, hidden_dim2, hidden_dim3, output_dim, dropout=0.5):
         super(GCNStack, self).__init__()
         # graph convolution layers
         self.convs = nn.ModuleList()
         self.convs.append(pyg_nn.GCNConv(input_dim, hidden_dim1))
         self.convs.append(pyg_nn.GCNConv(hidden_dim1, hidden_dim2))
-        self.convs.append(pyg_nn.GCNConv(hidden_dim2, hidden_dim2))
+        self.convs.append(pyg_nn.GCNConv(hidden_dim2, hidden_dim3))
         # layer norm
         self.lns = nn.ModuleList()
         self.lns.append(nn.LayerNorm(hidden_dim1))
         self.lns.append(nn.LayerNorm(hidden_dim2))
         # post-message-passing
         self.post_mp = nn.Sequential(
-            nn.Linear(hidden_dim2, hidden_dim2),
-            nn.Linear(hidden_dim2, output_dim))
+            nn.Linear(hidden_dim3, hidden_dim3),
+            nn.Linear(hidden_dim3, output_dim))
 
-        self.dropout = 0.5
+        self.dropout = dropout
         self.num_layers = 3
 
     def forward(self, x, edge_index):

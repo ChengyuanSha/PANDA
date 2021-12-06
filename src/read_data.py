@@ -67,7 +67,7 @@ def get_edge_index(G):
     return edge_index
 
 
-def get_train_test_label(G, autism_df, sample_balanced_class=False, assign_unlabeled_using_community=True):
+def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabeled_using_community=True):
     """ Get the training, testing mask, and y labels """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
@@ -78,9 +78,9 @@ def get_train_test_label(G, autism_df, sample_balanced_class=False, assign_unlab
     label_mask = np.zeros(all_nodes.shape[0], dtype=bool)
     label_mask[labeled_index] = True
 
-    # divide into more classes according to the confidence score
-    autism_df['label'][autism_df['confidence'] == 0.75] = 2
-    autism_df['label'][autism_df['confidence'] == 0.5] = 3
+    # process classes based on confidence score
+    # autism_df['label'][autism_df['confidence'] == 0.75] = 0
+    autism_df['label'][autism_df['confidence'] == 0.5] = 0
 
     # initialize y_label, train_mask, test_mask to whole graph size
     y_label = np.zeros(all_nodes.shape[0], dtype=np.compat.long)
@@ -96,28 +96,28 @@ def get_train_test_label(G, autism_df, sample_balanced_class=False, assign_unlab
         partion = community_louvain.best_partition(G)
         for c, i in enumerate(all_nodes):
             if c not in labeled_index:
-                y_label[c] = partion[i] + 4 # skip first 4 classes
+                y_label[c] = partion[i] + 2 # skip first 2 classes
 
     # randomly assign train test masks
     y_length = len(autism_df.index)
     y_index = np.arange(y_length)
 
     if sample_balanced_class:
-        # random sample 20 samples for each class
-        # 4 labeled classes
-        train_list = np.array([np.random.choice(autism_df.index[autism_df['label']==i].tolist(), 60, replace=False) for i in range(4)]).flatten()
-        test_list = np.array([i for i in y_index if i not in train_list])
+        # random sample 150 samples for each class
+        train_index = np.array([np.random.choice(autism_df.index[autism_df['label']==i].tolist(), 150, replace=False) for i in range(2)]).flatten()
+        test_index = np.array([i for i in y_index if i not in train_index])
     else:
         # 75% train, 25% test
-        max_train = int(y_length * 0.75)
+        max_train = int(y_length * 0.85)
         permutated_list = np.random.permutation(y_index)
-        train_list = permutated_list[:max_train]
-        test_list = permutated_list[max_train:]
+        train_index = permutated_list[:max_train]
+        test_index = permutated_list[max_train:]
+        # train_index = np.append(train_index, test_index[:200])
 
     # Using multiple levels of boolean index mask to assign train and test masks
     # 1. index to labelled indexes 2. assign to train/test mask to True
-    train_mask.flat[np.flatnonzero(label_mask)[train_list]] = True
-    test_mask.flat[np.flatnonzero(label_mask)[test_list]] = True
+    train_mask.flat[np.flatnonzero(label_mask)[train_index]] = True
+    test_mask.flat[np.flatnonzero(label_mask)[test_index]] = True
 
     return torch.tensor(train_mask, dtype=torch.bool),  \
            torch.tensor(test_mask, dtype=torch.bool), torch.tensor(y_label, dtype=torch.long)
