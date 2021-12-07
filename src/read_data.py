@@ -71,7 +71,7 @@ def get_edge_index(G):
     return edge_index
 
 
-def get_masks_ylabel(G, autism_df, sample_balanced_class=False, assign_unlabeled_using_community=True):
+def get_masks_ylabel(G, autism_df, sample_balanced_class=False, assign_unlabeled_using_community=False):
     """ Get the training, testing mask, and y labels """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
