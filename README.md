@@ -1,6 +1,6 @@
 # PANDA: Prioritization of autism‐genes using network‐based deep‐learning approach
 
-This repository is a re-implementation of [PANDA: Prioritization of autism‐genes using network‐based deep‐learning approach](https://onlinelibrary.wiley.com/doi/full/10.1002/gepi.22282). 
+This repository is a re-implementation of [PANDA: Prioritization of autism‐genes using network‐based deep‐learning approach](https://onlinelibrary.wiley.com/doi/full/10.1002/gepi.22282) in PyTorch. 
 
 ## Requirements
 
@@ -23,7 +23,7 @@ git clone https://github.com/ChengyuanSha/PANDA
   * HMIN_edgelist.csv: Human molecular interaction network (HMIN) in an edge list format
   * labeled_genes.csv: Graph nodes labels corresponding to HMIN
 * `src` folder contains implementation codes:
-  * `tests` folder: test performance for quality assurance.
+  * `tests` folder: tests for quality assurance.
   * `experiments` folder: other testing experiments 
   * GCN.py: definition of graph convolution network model
   * main.ipynb: the training and evaluation jupyter-notebook.

@@ -44,21 +44,23 @@ def read():
     return data
 
 
-def get_node_features(G):
+def get_node_features(G, hand_engineered=False):
     """ use hand designed node features or not """
-    x = torch.eye(G.number_of_nodes(), dtype=torch.float)
-    # Below are hand-engineered features, but not required in GNN
-    # # feature: node degree
-    # degrees = torch.tensor([val for (node, val) in G.degree()], dtype=torch.float)
-    # # closeness
-    # closeness = torch.tensor([val for (node, val) in nx.closeness_centrality(G).items()], dtype=torch.float)
-    # #  Betweenness
-    # betweenness =  torch.tensor([val for (node, val) in nx.betweenness_centrality(G).items()], dtype=torch.float)
-    # # feature: eigenvector_centrality
-    # ec = torch.tensor([val for (node, val) in nx.eigenvector_centrality(G).items()], dtype=torch.float)
-    # # feature: page rank
-    # pr = torch.tensor([val for (node, val) in nx.pagerank(G, alpha=0.9).items()], dtype=torch.float)
-    # x = torch.stack((degrees, closeness, betweenness, pr, ec)).t()
+    if hand_engineered:
+        # feature: node degree
+        degrees = torch.tensor([val for (node, val) in G.degree()], dtype=torch.float)
+        # closeness
+        closeness = torch.tensor([val for (node, val) in nx.closeness_centrality(G).items()], dtype=torch.float)
+        #  Betweenness
+        betweenness =  torch.tensor([val for (node, val) in nx.betweenness_centrality(G).items()], dtype=torch.float)
+        # feature: eigenvector_centrality
+        ec = torch.tensor([val for (node, val) in nx.eigenvector_centrality(G).items()], dtype=torch.float)
+        # feature: page rank
+        pr = torch.tensor([val for (node, val) in nx.pagerank(G, alpha=0.9).items()], dtype=torch.float)
+        x = torch.stack((degrees, closeness, betweenness, pr, ec)).t()
+    else:
+        # identity matrix, meaning no features supplied
+        x = torch.eye(G.number_of_nodes(), dtype=torch.float)
     return x
 
 
