@@ -67,7 +67,7 @@ def get_edge_index(G):
     return edge_index
 
 
-def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabeled_using_community=True):
+def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabeled_using_community=False):
     """ Get the training, testing mask, and y labels """
     # get the labeled autism nodes position in the node list
     autism_nodes = autism_df['entrez_id'].to_numpy()
@@ -84,7 +84,7 @@ def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabe
 
     # initialize y_label, train_mask, test_mask to whole graph size
     y_label = np.zeros(all_nodes.shape[0], dtype=np.compat.long)
-    y_label[:] = 4  # temporarily set class 4 to unlabeled data
+    y_label[:] = 2  # temporarily set class 4 to unlabeled data
     train_mask = np.zeros(all_nodes.shape[0], dtype=bool)
     test_mask = np.zeros(all_nodes.shape[0], dtype=bool)
     val_mask = np.zeros(all_nodes.shape[0], dtype=bool)
@@ -107,16 +107,19 @@ def get_train_test_label(G, autism_df, sample_balanced_class=True, assign_unlabe
         # random sample 150 samples for each class
         train_index = np.array([np.random.choice(autism_df.index[autism_df['label']==i].tolist(), 150, replace=False) for i in range(2)]).flatten()
         remaining_index = np.array([i for i in y_index if i not in train_index])
+        validation_index = remaining_index[:800]
+        test_index = remaining_index[800:]
     else:
-        # 75% train, 25% test
-        max_train = int(y_length * 0.85)
+        # 75% train, 25% test, not using this split method in this study
+        max_train = int(y_length * 0.7)
         permutated_list = np.random.permutation(y_index)
         train_index = permutated_list[:max_train]
-        remaining_index = permutated_list[max_train:]
-    validation_index = remaining_index[:800]
-    test_index = remaining_index[800:]
+        test_index = validation_index = permutated_list[max_train:]
+        # remaining_index = permutated_list[max_train:]
+        # validation_index = remaining_index[:int(len(remaining_index)*0.3)]
+        # test_index = remaining_index[int(len(remaining_index)*0.3):]
 
-    # Using multiple levels of boolean index mask to assign train and test masks
+        # Using multiple levels of boolean index mask to assign train and test masks
     # 1. index to labelled indexes 2. assign to train/test mask to True
     train_mask.flat[np.flatnonzero(label_mask)[train_index]] = True
     test_mask.flat[np.flatnonzero(label_mask)[test_index]] = True
