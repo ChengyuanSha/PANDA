@@ -60,6 +60,12 @@ The baseline code can be found in `src/baselines.ipynb` with sections: `Random F
 | SVM    | 85%      | 0.99      | 0.85   | 0.92     |
 | LGP    | 86%      | 0.98      | 0.84   | 0.91     |
 
+## Contributing
+If you'd like to contribute, or have any suggestions for these guidelines, you 
+can open an issue on this GitHub repository.
+
+All contributions welcome! All content in this repository is licensed under the MIT license.
+
 
 ## Reference 
 
