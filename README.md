@@ -49,13 +49,13 @@ You can download pretrained model in: `src/pretrained_model.pth`.
 
 
 ## Results
-Our model (PANADA) achieves the following performance comparing with Random Forest (RF), support vector machine (SVM),
+Our model (PANDA) achieves the following performance comparing with Random Forest (RF), support vector machine (SVM),
 Linear Genetic Programming(LGP) on HMIN dataset:   
 The baseline code can be found in `src/baselines.ipynb` with sections: `Random Forest`, `SVM`, `LGP`
 
 | Model name | Accuracy | Precision | Recall | F1 score |
 |--------|----------|-----------|--------|----------|
-| PANADA | 86%      | 1.00      | 0.86   | 0.93     |
+| PANDA | 86%      | 1.00      | 0.86   | 0.93     |
 | RF     | 86%      | 0.98      | 0.84   | 0.91     |
 | SVM    | 85%      | 0.99      | 0.85   | 0.92     |
 | LGP    | 86%      | 0.98      | 0.84   | 0.91     |
