@@ -28,6 +28,7 @@ git clone https://github.com/ChengyuanSha/PANDA
   * GCN.py: definition of graph convolution network model
   * main.ipynb: the training and evaluation jupyter-notebook.
   * read_data.py: data preprocessing
+  * baselines.ipynb: other algorithms to compare with
 
 
 ## Training
@@ -49,8 +50,8 @@ You can download pretrained model in: `src/pretrained_model.pth`.
 
 ## Results
 Our model (PANADA) achieves the following performance comparing with Random Forest (RF), support vector machine (SVM),
-Linear Genetic Programming(LGP) on HMIN dataset:
-
+Linear Genetic Programming(LGP) on HMIN dataset:   
+The baseline code can be found in `src/baselines.ipynb` with sections: `Random Forest`, `SVM`, `LGP`
 
 | Model name | Accuracy | Precision | Recall | F1 score |
 |--------|----------|-----------|--------|----------|
