@@ -54,16 +54,15 @@ Linear Genetic Programming(LGP) on HMIN dataset:
 The baseline code can be found in `src/baselines.ipynb` with sections: `Random Forest`, `SVM`, `LGP`
 
 | Model name | Accuracy | Precision | Recall | F1 score |
-|--------|----------|-----------|--------|----------|
-| PANDA | 86%      | 1.00      | 0.86   | 0.93     |
-| RF     | 86%      | 0.98      | 0.84   | 0.91     |
-| SVM    | 85%      | 0.99      | 0.85   | 0.92     |
-| LGP    | 86%      | 0.98      | 0.84   | 0.91     |
+|------------|----------|-----------|--------|----------|
+| PANDA      | 86%      | 1.00      | 0.86   | 0.93     |
+| RF         | 86%      | 0.98      | 0.84   | 0.91     |
+| SVM        | 85%      | 0.99      | 0.85   | 0.92     |
+| LGP        | 86%      | 0.98      | 0.84   | 0.91     |
 
 ## Contributing
 If you'd like to contribute, or have any suggestions, you 
 can open an issue on this GitHub repository.
-
 All contributions welcome! All content in this repository is licensed under the MIT license.
 
 
