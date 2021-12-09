@@ -55,7 +55,7 @@ The baseline code can be found in `src/baselines.ipynb` with sections: `Random F
 
 | Model name | Accuracy | Precision | Recall | F1 score |
 |------------|----------|-----------|--------|----------|
-| PANDA      | 86%      | 1.00      | 0.86   | 0.93     |
+| PANDA      | 88%      | 1.00      | 0.88   | 0.93     |
 | RF         | 86%      | 0.98      | 0.84   | 0.91     |
 | SVM        | 85%      | 0.99      | 0.85   | 0.92     |
 | LGP        | 86%      | 0.98      | 0.84   | 0.91     |
