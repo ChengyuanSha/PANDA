@@ -12,8 +12,8 @@ import os
 script_dir = os.path.dirname(__file__)  # absolute dir the script is in
 
 
-def read():
-    """ read the input data into the pyG Data class format """
+def load_G_df():
+    """ load csv data """
     edge_list_path = os.path.join(script_dir, "../data/HMIN_edgelist.csv")
     autism_df_path = os.path.join(script_dir, "../data/labeled_genes.csv")
 
@@ -24,6 +24,12 @@ def read():
     autism_df = pd.read_csv(autism_df_path)
     autism_df = autism_df.drop_duplicates(subset='entrez_id', keep="last")
     autism_df = autism_df.reset_index()
+    return G, autism_df
+
+
+def read():
+    """ read the input data into the pyG Data class format """
+    G, autism_df = load_G_df()
 
     # get graph edge index
     edge_index = get_edge_index(G)
@@ -52,7 +58,7 @@ def get_node_features(G, hand_engineered=False):
         # closeness
         closeness = torch.tensor([val for (node, val) in nx.closeness_centrality(G).items()], dtype=torch.float)
         #  Betweenness
-        betweenness =  torch.tensor([val for (node, val) in nx.betweenness_centrality(G).items()], dtype=torch.float)
+        betweenness = torch.tensor([val for (node, val) in nx.betweenness_centrality(G).items()], dtype=torch.float)
         # feature: eigenvector_centrality
         ec = torch.tensor([val for (node, val) in nx.eigenvector_centrality(G).items()], dtype=torch.float)
         # feature: page rank
@@ -71,6 +77,20 @@ def get_edge_index(G):
     col = torch.from_numpy(adj.col.astype(np.int64)).to(torch.long)
     edge_index = torch.stack([row, col], dim=0)
     return edge_index
+
+
+def get_autism_position():
+    """ Get autism node position """
+    G, autism_df = load_G_df()
+    # get the labeled autism nodes position in the node list
+    autism_df['label'][autism_df['confidence'] == 0.5] = 0
+    positive_autism_nodes = autism_df[autism_df['label'] == 1]['entrez_id'].to_numpy()
+    all_nodes = np.array(G.nodes())
+
+    # Find the labeled index in all_nodes, all_nodes are unique
+    positive_index = np.array([np.where(all_nodes == i)[0][0] for i in positive_autism_nodes])
+
+    return positive_index
 
 
 def get_masks_ylabel(G, autism_df, sample_balanced_class=False, assign_unlabeled_using_community=True):
@@ -107,7 +127,7 @@ def get_masks_ylabel(G, autism_df, sample_balanced_class=False, assign_unlabeled
                 y_label[c] = partion[i] + 2  # skip first 2 classes
 
     # randomly assign train test masks
-    y_length = len(autism_df.index) # how many labeled nodes
+    y_length = len(autism_df.index)  # how many labeled nodes
     y_index = np.arange(y_length)
 
     if sample_balanced_class:
@@ -145,4 +165,5 @@ def get_masks_ylabel(G, autism_df, sample_balanced_class=False, assign_unlabeled
 
 
 if __name__ == '__main__':
-    data = read()
+    # data = read()
+    get_autism_position()
